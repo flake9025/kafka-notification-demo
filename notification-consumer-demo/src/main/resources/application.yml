@@ -1,0 +1,59 @@
+# Server configuration
+server:
+  url: http://localhost:8080
+# Spring
+spring:
+  # Application
+  application.name: ens-notification-demo
+  # Cache
+  cache.type: none
+  # Database Configuration
+  datasource:
+    url: jdbc:h2:mem:dltdb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  h2:
+    console.enabled: true
+  # JPA (Hibernate) Config
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  # Kafka
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+      notification:
+        group-id: ens-notification
+        topic: ens_notification
+        mode: batch #record or batch
+        commit-strategy: transaction # auto, manual, transaction
+        sync-commits: false
+        exception-strategy: silent # silent, throw
+        exception-strategy-smir: silent # silent, throw
+        retries: 0
+        retries-interval: 300000
+        retries-smir: false
+        dlt: ens_notification_dlt
+        dlt-smir: ens_notification_dlt-smir
+        max-poll-records: 50 # Nombre de messages dans chaque lot
+        max-poll-interval-ms: 300000 # Temps de traitement maximum
+  # Threads
+  threads:
+    virtual:
+      enabled: true
+
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    fr.vvlabs: DEBUG
+    org.springframework: INFO
+    org.springframework.cache: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.keycloak: DEBUG
+    com.github.benmanes.caffeine: DEBUG

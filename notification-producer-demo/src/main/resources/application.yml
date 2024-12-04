@@ -1,0 +1,33 @@
+# Server configuration
+server:
+  url: http://localhost:8081
+# Spring
+spring:
+  # Application
+  application.name: ens-notification-producer-demo
+  # Cache
+  cache.type: none
+  # Kafka
+  kafka:
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+    producer:
+      topic-name: ens_notification
+      delay-ms: 1
+      max-messages: 1000
+
+  # Threads
+  threads:
+    virtual:
+      enabled: true
+
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    fr.vvlabs: DEBUG
+    org.springframework: INFO
+    org.springframework.cache: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.keycloak: DEBUG
+    com.github.benmanes.caffeine: DEBUG

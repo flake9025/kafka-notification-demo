@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Définit le niveau de log de la console -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Définit le fichier de log avec rotation par taille et date -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/eip-notification.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+
+        <!-- Politique de rotation basée sur la taille et la date -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Chemin et nom de fichier pour les logs archivés -->
+            <fileNamePattern>./logs/archived/eip-notification-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- Taille maximale d'un fichier avant rotation -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- Nombre de jours maximum de conservation des fichiers -->
+            <maxHistory>30</maxHistory>
+            <!-- Taille totale des logs avant suppression des plus anciens -->
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Définit les niveaux de log pour l'application -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="fr.vvlabs" level="DEBUG"/>
+
+    <!-- Définit la racine des logs (console et fichier) -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>
