@@ -1,4 +1,4 @@
-package fr.vvlabs.notification.model;
+package fr.vvlabs.notification.record;
 
 import lombok.Builder;
 import lombok.Data;

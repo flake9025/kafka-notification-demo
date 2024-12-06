@@ -1,6 +1,6 @@
 package fr.vvlabs.notification.service;
 
-import fr.vvlabs.notification.model.NotificationEvent;
+import fr.vvlabs.notification.record.NotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

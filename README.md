@@ -40,6 +40,8 @@ Ce dépôt regroupe les différents projets nécessaires pour mettre en place un
   
 Kafka et ses brokers seront démarrés, et les topics nécessaires (ens_notification, ens_notification_dlt, et ens_notification_dlt-smir) seront créés automatiquement
 
+<img src="samples/docker.png" alt="Docker" width="768"/>
+
 ### Étape 2 : Lancer la console AKHQ
 
 Une interface web AKHQ est disponible pour gérer et visualiser les topics Kafka.
@@ -49,8 +51,17 @@ Structure des Topics Kafka
 ens_notification : Topic principal pour les notifications.
 ens_notification_dlt : Topic pour les messages échoués.
 ens_notification_dlt-smir : Topic pour les erreurs spécifiques liées à SMIR.
+
+<img src="samples/akhq.png" alt="AKHQ" width="768"/>
    
-### Étape 3 : Lancer le consommateur Kafka
+### Étape 3 : Lancer la console H2
+
+Une interface web H2 Console est disponible pour gérer et visualiser la base de données.
+Accédez-y via http://localhost:8080/h2-console/
+
+<img src="samples/database.png" alt="AKHQ" width="768"/>
+
+### Étape 4 : Lancer le consommateur Kafka
 
 Adapter la configuration souhaitée dans
 
@@ -64,7 +75,7 @@ Pour plus de détails voir https://github.com/flake9025/kafka-notification-demo/
    java -jar notification-consumer-demo/target/notification-consumer-demo.jar
    ```
 
-### Étape 4 : Lancer le producteur Kafka
+### Étape 5 : Lancer le producteur Kafka
 
    ```bash
    java -jar notification-producer-demo/target/notification-producer-demo.jar

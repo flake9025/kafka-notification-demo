@@ -2,7 +2,7 @@ package fr.vvlabs.notification.service;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.vvlabs.notification.model.NotificationEvent;
+import fr.vvlabs.notification.record.NotificationEvent;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

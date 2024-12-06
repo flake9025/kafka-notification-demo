@@ -1,11 +1,16 @@
 package fr.vvlabs.notification.service.consumer.errors;
 
 import fr.vvlabs.notification.exception.SmirClientTooManyRequestException;
+import fr.vvlabs.notification.repository.ErrorEntityRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
+
+import java.util.Optional;
 
 @Slf4j
 public class NotificationThrowErrorHandler {
@@ -17,6 +22,11 @@ public class NotificationThrowErrorHandler {
     private final int retries;
     private final long retriesInterval;
     private final boolean retriesSmir;
+
+    @Autowired(required = false)
+    protected Optional<ErrorEntityRepository> errorRecordRepository;
+    @Value("${spring.kafka.consumer.notification.dlt-database:false}")
+    protected boolean dltDatabaseEnabled;
 
     private int nbDlt = 0;
     private int nbDltSmir = 0;

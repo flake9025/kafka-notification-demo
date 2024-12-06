@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.vvlabs.notification.config.CommitStrategy;
 import fr.vvlabs.notification.config.ExceptionStrategy;
 import fr.vvlabs.notification.exception.SmirClientTooManyRequestException;
-import fr.vvlabs.notification.model.NotificationEvent;
+import fr.vvlabs.notification.record.NotificationEvent;
 import fr.vvlabs.notification.service.NotificationService;
 import fr.vvlabs.notification.service.consumer.errors.NotificationSilentErrorHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,6 @@ public abstract class AbstractNotificationConsumer {
     protected ObjectMapper objectMapper;
     @Autowired
     protected KafkaTemplate<String, Object> kafkaTemplate;
-
     @Value("${spring.kafka.consumer.notification.commit-strategy:auto}") // auto, manual, transaction
     protected String commitStrategy;
     @Value("${spring.kafka.consumer.notification.exception-strategy:throw}") // silent, throw

@@ -11,7 +11,7 @@ spring:
   datasource:
     url: jdbc:h2:mem:dltdb
     username: sa
-    password: password
+    password:
     driverClassName: org.h2.Driver
   h2:
     console.enabled: true
@@ -20,7 +20,7 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     show-sql: true
   # Kafka
   kafka:
@@ -39,6 +39,7 @@ spring:
         retries-smir: false
         dlt: ens_notification_dlt
         dlt-smir: ens_notification_dlt-smir
+        dlt-database: false
         max-poll-records: 50 # Nombre de messages dans chaque lot
         max-poll-interval-ms: 300000 # Temps de traitement maximum
   # Threads
