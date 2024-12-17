@@ -17,7 +17,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class NotificationSilentErrorHandler {
+public class NotificationSilentErrorHandler implements AbstractNotificationErrorHandler<Message<?>> {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -32,37 +32,60 @@ public class NotificationSilentErrorHandler {
     private int nbDlt = 0;
     private int nbDltSmir = 0;
 
-    public Object sendToDlt(Message<?> message, Exception exception) {
-        return dltDatabaseEnabled ? sendToDltDatabase(message, exception, "Generic") : sendToDltTopic(message, exception);
+    public void sendToDlt(Message<?> message, Exception exception) {
+        if(dltDatabaseEnabled) {
+            sendToDltDatabase(message, exception);
+        }else{
+            sendToDltTopic(message, exception);
+        }
     }
 
-    public Object sendToDltSmir(Message<?> message, Exception exception) {
-        return dltDatabaseEnabled ? sendToDltDatabase(message, exception, "SMIR") : sendToDltSmirTopic(message, exception);
+    public void sendToDltSmir(Message<?> message, Exception exception) {
+        if(dltDatabaseEnabled) {
+            sendToDltSmirDatabase(message, exception);
+        }else{
+            sendToDltSmirTopic(message, exception);
+        }
     }
 
-
-    private Object sendToDltDatabase(Message<?> message, Exception exception, String errorType) {
+    @Override
+    public void sendToDltDatabase(Message<?> message, Exception exception) {
         log.error("Generic Error in processing message: {}, sending to database", message.getPayload());
         ErrorEntityRepository repository = errorRecordRepository.orElseThrow(()-> new IllegalStateException("ErrorRecordRepository is null"));
-        return repository.save(buildErrorEntity(message, exception, errorType));
+        repository.save(buildErrorEntity(message, exception, "Generic"));
     }
 
-    private Object sendToDltTopic(Message<?> message, Exception exception) {
+    @Override
+    public void sendToDltSmirDatabase(Message<?> message, Exception exception) {
+        log.error("SMIR Error in processing message: {}, sending to database", message.getPayload());
+        ErrorEntityRepository repository = errorRecordRepository.orElseThrow(()-> new IllegalStateException("ErrorRecordRepository is null"));
+        repository.save(buildErrorEntity(message, exception, "SMIR"));
+    }
+
+    @Override
+    public void sendToDltTopic(Message<?> message, Exception exception) {
         log.error("Generic Error in processing message: {}, sending to {}", message.getPayload(), deadLetterTopic);
         ProducerRecord<String, Object> errorRecord = buildErrorRecord(message, deadLetterTopic);
         kafkaTemplate.send(errorRecord);
         nbDlt++;
         log.error("DLT count: {}", nbDlt);
-        return message.getPayload();
     }
 
-    private Object sendToDltSmirTopic(Message<?> message, Exception exception) {
+    @Override
+    public void sendToDltSmirTopic(Message<?> message, Exception exception) {
         log.error("SMIR Error in processing message: {}, sending to {}", message.getPayload(), deadLetterTopicSmir);
         ProducerRecord<String, Object> errorRecord = buildErrorRecord(message, deadLetterTopicSmir);
         kafkaTemplate.send(errorRecord);
         nbDltSmir++;
         log.error("DLT SMIR count: {}", nbDltSmir);
-        return message.getPayload();
+    }
+
+    @Override
+    public ErrorEntity buildErrorEntity(Message<?> message, Exception exception, String errorType) {
+        return new ErrorEntity()
+                .setRecord(message.getPayload().toString())
+                .setException(exception.getMessage())
+                .setErrorType(errorType);
     }
 
     private ProducerRecord<String, Object> buildErrorRecord(Message<?> message, String destinationTopic) {
@@ -78,13 +101,6 @@ public class NotificationSilentErrorHandler {
             }
         });
         return producerRecord;
-    }
-
-    private ErrorEntity buildErrorEntity(Message<?> message, Exception exception, String errorType) {
-        return new ErrorEntity()
-        .setRecord(message.getPayload().toString())
-        .setException(exception.getMessage())
-        .setErrorType(errorType);
     }
 }
 

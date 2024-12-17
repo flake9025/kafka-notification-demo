@@ -28,7 +28,8 @@ Ce projet est une démonstration d'un consommateur Kafka flexible et configurabl
     - Différents DLT configurables
       - DLT pour les erreurs générales (`dlt`).
       - DLT pour les erreurs de rate limit de l'API SMIR (`dlt-smir`).
-
+      - DLT en base de données ou topic** grâce à la propriété `dlt-database`.
+  
 - **Optimisation des performances** :
     - Taille des lots (`max-poll-records`).
     - Intervalle maximum entre deux polls (`max-poll-interval.ms`).
@@ -58,5 +59,6 @@ spring:
         retries-smir: false
         dlt: ens_notification_dlt
         dlt-smir: ens_notification_dlt-smir
+        dlt-database: false # false pour topic Kafka, true pour base de données
         max-poll-records: 50
         max-poll-interval.ms: 300000

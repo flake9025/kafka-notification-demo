@@ -1,5 +1,6 @@
 package fr.vvlabs.notification.config;
 
+import fr.vvlabs.notification.repository.ErrorEntityRepository;
 import fr.vvlabs.notification.service.consumer.errors.NotificationThrowErrorHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -7,6 +8,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,6 +23,7 @@ import org.springframework.kafka.transaction.KafkaTransactionManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Configuration
 @Slf4j
@@ -50,6 +53,10 @@ public class KafkaConsumerConfig {
     private int maxPollRecords;
     @Value("${spring.kafka.consumer.notification.max-poll-interval-ms:300000}")
     private int maxPollInterval;
+    @Autowired(required = false)
+    protected Optional<ErrorEntityRepository> errorRecordRepository;
+    @Value("${spring.kafka.consumer.notification.dlt-database:false}")
+    protected boolean dltDatabaseEnabled;
 
     @Bean
     public boolean isAutoStartup() {
@@ -60,7 +67,6 @@ public class KafkaConsumerConfig {
     public boolean isManualStartup() {
         return CommitStrategy.MANUAL.equalsIgnoreCase(commitStrategy);
     }
-
 
     @Bean(name = "genericRecoverer")
     public DeadLetterPublishingRecoverer genericRecoverer(KafkaTemplate<String, Object> kafkaTemplate) {
@@ -89,7 +95,10 @@ public class KafkaConsumerConfig {
                 deadLetterTopicSmir,
                 retries,
                 retriesInterval,
-                retriesSmir
+                retriesSmir,
+                errorRecordRepository,
+                dltDatabaseEnabled
+
         );
     }
 
